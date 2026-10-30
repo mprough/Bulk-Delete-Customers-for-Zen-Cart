@@ -1,0 +1,58 @@
+name: Validate plugin
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - name: PHP syntax
+        run: find files tests -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Runtime behavior
+        run: php tests/runtime.php
+      - name: Installer and menu lifecycle
+        run: php tests/lifecycle.php
+      - name: Package consistency
+        run: python3 tests/package.py
+      - name: Whitespace
+        run: git diff --check HEAD
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: test-only
+          MARIADB_DATABASE: bdc_plugin_test
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: zencart/zencart
+          ref: v2.2.2
+          path: zen-core
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql
+          coverage: none
+      - name: Real core and database integration
+        env:
+          ZEN_ROOT: ${{ github.workspace }}/zen-core
+          BDC_TEST_DSN: mysql:host=127.0.0.1;port=3306;dbname=bdc_plugin_test
+          BDC_TEST_USER: root
+          BDC_TEST_PASSWORD: test-only
+        run: php tests/integration.php

@@ -1,6 +1,6 @@
 # Bulk Delete Customers for Zen Cart
 
-Version 1.0.0, by Melanie Prough, PRO-Webs, Inc. | [PRO-Webs.net](https://pro-webs.net/)
+Version 1.0.1, by Melanie Prough, PRO-Webs, Inc. | [PRO-Webs.net](https://pro-webs.net/)
 
 Remove customer accounts in batches using checkbox selection. Checkboxes appear in the regular Customers list, including its unsearched view. A separate **Customers > Bulk customer removal** page adds filters to help identify possible spam registrations.
 
@@ -26,8 +26,8 @@ Designed for Zen Cart 2.0.x, 2.1.x, and 2.2.x. Use PHP only within your installe
 ## Installation
 
 1. Back up your database and files. Try the plugin on a development copy first.
-2. Upload the contents of `files/` to your store root. The resulting path is `zc_plugins/BulkDeleteCustomers/v1.0.0/`. There is no admin folder to rename or core file to replace.
-3. Open **Modules > Plugin Manager**, select **Bulk Delete Customers**, and install/enable version 1.0.0.
+2. Upload the contents of `files/` to your store root. The resulting path is `zc_plugins/BulkDeleteCustomers/v1.0.1/`. There is no admin folder to rename or core file to replace.
+3. Open **Modules > Plugin Manager**, select **Bulk Delete Customers**, and install/enable version 1.0.1.
 4. Open **Customers > Customers** for the standard list checkboxes, or **Customers > Bulk customer removal** for additional filters.
 5. For non-superuser administrators, grant both the Customers page and Bulk customer removal page in **Admin > Admin profiles**. The plugin requires both permissions. Superusers have access automatically.
 
@@ -69,13 +69,13 @@ The confirmation is consumed before deletion starts. Refreshing or resubmitting 
 
 ## Upgrade and removal
 
-There is no prior release or legacy installation to migrate. Future upgrades use Plugin Manager. Disable the plugin to stop its controls from loading. Uninstall through Plugin Manager to remove its version marker, menu registration, and plugin page permission mappings. Uninstall never removes customer accounts or orders. Remove the plugin's version files only after Plugin Manager has finished.
+Upgrade from 1.0.0 by uploading the new version directory and selecting version 1.0.1 in Plugin Manager. No legacy loose-file installation needs migration. Disable the plugin to stop its controls from loading. Uninstall through Plugin Manager to remove its version marker, menu registration, and plugin page permission mappings. Uninstall never removes customer accounts or orders. Remove the plugin's version files only after Plugin Manager has finished.
 
 If the menu does not appear, confirm the plugin is installed/enabled, reload admin, and check the profile permissions. If checkboxes are absent, confirm both permissions and that a customized `customers.php` still fires `NOTIFY_ADMIN_CUSTOMERS_LISTING_HEADER` and `NOTIFY_ADMIN_CUSTOMERS_LISTING_ELEMENT`. This plugin does not replace custom listing code.
 
 ## Validation
 
-`php tests/runtime.php` checks selection validation, date and text filters, confirmation ownership/expiry/replay, changed and missing accounts, order protection, review options, native listing hooks, and permission visibility using test doubles. `php tests/lifecycle.php` exercises install, idempotent upgrade, runtime menu repair, and uninstall against a simulated Zen Cart environment. `python3 tests/package.py` checks the package and creates a ZIP when an output path is provided. The PHP CI matrix runs from 8.0 through 8.5.
+`php tests/bootstrap.php` opens the real admin page entry point with the currencies class initially unloaded. `php tests/runtime.php` checks selection validation, date and text filters, confirmation ownership/expiry/replay, changed and missing accounts, order protection, review options, native listing hooks, and permission visibility using test doubles. `php tests/lifecycle.php` exercises install, idempotent upgrade, runtime menu repair, and uninstall against a simulated Zen Cart environment. `python3 tests/package.py` checks the package and creates a ZIP when an output path is provided. The PHP CI matrix runs from 8.0 through 8.5. A separate test exercises Zen Cart 2.2.2's actual installer and Customer class against a disposable MariaDB database.
 
 These tests are not a substitute for installation and deletion testing on a backed-up development store with your exact extensions. No live customer data is used by the tests.
 

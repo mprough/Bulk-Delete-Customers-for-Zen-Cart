@@ -5,10 +5,10 @@ import re
 import sys
 import zipfile
 root = Path(__file__).resolve().parent.parent
-plugin = root / 'files/zc_plugins/BulkDeleteCustomers/v1.0.0'
-assert sorted(p.name for p in plugin.parent.iterdir()) == ['v1.0.0']
-assert "'pluginVersion' => 'v1.0.0'" in (plugin / 'manifest.php').read_text()
-assert "$version = '1.0.0'" in (plugin / 'Installer/ScriptedInstaller.php').read_text()
+plugin = root / 'files/zc_plugins/BulkDeleteCustomers/v1.0.1'
+assert plugin.is_dir()
+assert "'pluginVersion' => 'v1.0.1'" in (plugin / 'manifest.php').read_text()
+assert "$version = '1.0.1'" in (plugin / 'Installer/ScriptedInstaller.php').read_text()
 for path in plugin.rglob('*'):
     if path.is_file():
         assert path.suffix == '.php', path

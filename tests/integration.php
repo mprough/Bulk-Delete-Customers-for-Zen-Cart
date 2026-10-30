@@ -44,7 +44,7 @@ require $zen . '/admin/includes/functions/admin_access.php';
 require $zen . '/includes/classes/PluginSupport/ScriptedInstallHelpers.php';
 require $zen . '/includes/classes/PluginSupport/ScriptedInstaller.php';
 require $zen . '/includes/classes/PluginSupport/PluginErrorContainer.php';
-$root = dirname(__DIR__) . '/files/zc_plugins/BulkDeleteCustomers/v1.0.0';
+$root = dirname(__DIR__) . '/files/zc_plugins/BulkDeleteCustomers/v1.0.1';
 require $root . '/Installer/ScriptedInstaller.php';
 $installer = new ScriptedInstaller($db, new Zencart\PluginSupport\PluginErrorContainer);
 function lifecycle($installer, $method, $args = []) { $m = new ReflectionMethod($installer, $method); $m->setAccessible(true); return $m->invokeArgs($installer, $args); }

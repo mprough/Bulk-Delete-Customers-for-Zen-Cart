@@ -17,6 +17,8 @@ jobs:
           coverage: none
       - name: PHP syntax
         run: find files tests -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Admin page bootstrap
+        run: php tests/bootstrap.php
       - name: Runtime behavior
         run: php tests/runtime.php
       - name: Installer and menu lifecycle

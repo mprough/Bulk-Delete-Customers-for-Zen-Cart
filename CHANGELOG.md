@@ -1,5 +1,10 @@
 # Change history
 
+## 1.0.1 - 2026-10-30
+
+- Fixed a fatal error when opening Bulk customer removal by explicitly loading Zen Cart's currencies class before creating the currencies object.
+- Added a controller bootstrap regression test so a missing core class load is caught before release.
+
 ## 1.0.0 - 2026-10-30
 
 - First release with checkbox selection in the standard Customers list, including the unsearched view.

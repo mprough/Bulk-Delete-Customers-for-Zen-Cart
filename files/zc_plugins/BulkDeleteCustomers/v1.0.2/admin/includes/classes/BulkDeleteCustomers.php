@@ -6,6 +6,15 @@ final class BulkDeleteCustomers
     public const LIMIT = 50;
     public const TTL = 900;
 
+    // Zen Cart 1.5.8 and 2.0.x have no English fallback for plugin language files, and an
+    // undefined constant is fatal on PHP 8. Translations load first and keep their values.
+    public static function englishDefaults(string $file): void
+    {
+        foreach (require $file as $key => $text) {
+            if (!defined($key)) { define($key, $text); }
+        }
+    }
+
     public static function text($value): string
     {
         return is_scalar($value) ? trim((string)$value) : '';

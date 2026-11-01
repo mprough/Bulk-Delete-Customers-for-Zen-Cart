@@ -8,6 +8,8 @@ class zcObserverBulkDeleteCustomers extends base
         if (empty($_SESSION['admin_id']) || (!zen_is_superuser() && (!check_page(FILENAME_BULK_DELETE_CUSTOMERS, []) || !check_page(FILENAME_CUSTOMERS, [])))) {
             return;
         }
+        if (!class_exists('BulkDeleteCustomers', false)) { require_once dirname(__DIR__) . '/BulkDeleteCustomers.php'; }
+        BulkDeleteCustomers::englishDefaults(dirname(__DIR__, 2) . '/languages/english/extra_definitions/lang.bulk_delete_customers_menu.php');
         $this->attach($this, ['NOTIFY_ADMIN_CUSTOMERS_LISTING_HEADER', 'NOTIFY_ADMIN_CUSTOMERS_LISTING_ELEMENT']);
     }
     public function update(&$class, $eventID, $paramsArray = [], &$columns = null)
@@ -31,8 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     function sync() {
         var count = boxes.filter(function (box) { return box.checked; }).length;
-        all.checked = boxes.length > 0 && count === boxes.length;
-        all.indeterminate = count > 0 && count < boxes.length;
+        all.checked = count > 0 && count === Math.min(boxes.length, 50);
+        all.indeterminate = count > 0 && !all.checked;
         form.querySelector('button').disabled = count === 0 || count > 50;
     }
     boxes.forEach(function (box) { box.addEventListener('change', sync); });

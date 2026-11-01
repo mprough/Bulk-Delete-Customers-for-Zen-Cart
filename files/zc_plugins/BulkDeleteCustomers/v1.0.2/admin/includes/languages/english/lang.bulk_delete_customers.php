@@ -37,6 +37,7 @@ return [
     'BDC_CANCEL' => 'Cancel',
     'BDC_ID' => 'ID',
     'BDC_EMAIL' => 'Email',
+    'BDC_IP_COLUMN' => 'Registration IP',
     'BDC_CREATED' => 'Signed up',
     'BDC_LAST_LOGIN' => 'Last login',
     'BDC_COUNT' => 'Orders',

@@ -1,7 +1,9 @@
 <?php
 /** Copyright 2026 Melanie Prough, PRO-Webs, Inc. GPL-2.0-only. */
+if (!defined('IS_ADMIN_FLAG')) { die('Illegal Access'); }
 require 'includes/application_top.php';
-require_once __DIR__ . '/includes/classes/BulkDeleteCustomers.php';
+if (!class_exists('BulkDeleteCustomers', false)) { require_once __DIR__ . '/includes/classes/BulkDeleteCustomers.php'; }
+BulkDeleteCustomers::englishDefaults(__DIR__ . '/includes/languages/english/lang.bulk_delete_customers.php');
 // Zen Cart checks this page's permission during application_top. Also require
 // Customers access, so this feature cannot grant broader customer privileges.
 if (empty($_SESSION['admin_id']) || (!zen_is_superuser() && (!check_page(FILENAME_CUSTOMERS, []) || !check_page(FILENAME_BULK_DELETE_CUSTOMERS, [])))) {
@@ -68,8 +70,8 @@ catch (InvalidArgumentException $e) { bdcMessage($e->getMessage()); }
 if ($pending === null) {
     $where = BulkDeleteCustomers::where($filters);
     $total = (int)$db->Execute('SELECT COUNT(*) AS total FROM ' . BulkDeleteCustomers::source() . ' WHERE ' . $where)->fields['total'];
-    $pages = max(1, (int)ceil($total / BulkDeleteCustomers::LIMIT));
-    $filters['page'] = min($filters['page'], $pages);
+    $bdcPages = max(1, (int)ceil($total / BulkDeleteCustomers::LIMIT));
+    $filters['page'] = min($filters['page'], $bdcPages);
     $offset = ($filters['page'] - 1) * BulkDeleteCustomers::LIMIT;
     $sorts = ['newest' => 'ci.customers_info_date_account_created DESC, c.customers_id DESC', 'oldest' => 'ci.customers_info_date_account_created ASC, c.customers_id ASC', 'name' => 'c.customers_lastname, c.customers_firstname, c.customers_id'];
     $rows = $db->Execute('SELECT ' . BulkDeleteCustomers::columns() . ' FROM ' . BulkDeleteCustomers::source() . ' WHERE ' . $where . ' ORDER BY ' . $sorts[$filters['sort']] . ' LIMIT ' . BulkDeleteCustomers::LIMIT . ' OFFSET ' . $offset);
@@ -78,9 +80,6 @@ if ($pending === null) {
 <!doctype html>
 <html <?= HTML_PARAMS ?>>
 <head>
-<meta charset="<?= CHARSET ?>">
-<title><?= bdcEscape(HEADING_TITLE) ?></title>
-<link rel="stylesheet" href="includes/stylesheet.css">
 <?php require DIR_WS_INCLUDES . 'admin_html_head.php'; ?>
 <style>
 .bdc-panel{background:#fff;border:1px solid #ddd;border-radius:6px;padding:18px;margin:15px 0}.bdc-filters{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}.bdc-filters label{display:block}.bdc-filters input,.bdc-filters select{display:block;min-width:180px;padding:7px}.bdc-check{width:20px;height:20px;vertical-align:middle}.bdc-options label{display:block;margin:12px 0}.bdc-table td,.bdc-table th{vertical-align:middle!important}.bdc-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:15px 0}.bdc-table-wrap{overflow-x:auto}
@@ -101,9 +100,9 @@ if ($pending === null) {
 <label><?= bdcEscape($field[0]) ?><select name="<?= $key ?>"><?php foreach ($field[1] as $value => $label): ?><option value="<?= $value ?>"<?= $filters[$key] === $value ? ' selected' : '' ?>><?= bdcEscape($label) ?></option><?php endforeach; ?></select></label>
 <?php endforeach; ?>
 <button type="submit" class="btn btn-primary"><?= bdcEscape(BDC_FILTER) ?></button>
-<a href="<?= bdcEscape(zen_href_link(FILENAME_BULK_DELETE_CUSTOMERS)) ?>"><?= bdcEscape(BDC_RESET) ?></a>
+<a href="<?= zen_href_link(FILENAME_BULK_DELETE_CUSTOMERS) ?>"><?= bdcEscape(BDC_RESET) ?></a>
 </form>
-<p><?= sprintf(BDC_RESULTS, $total, $filters['page'], $pages) ?></p>
+<p><?= sprintf(BDC_RESULTS, $total, $filters['page'], $bdcPages) ?></p>
 <?php else: ?>
 <p class="alert alert-danger"><?= sprintf(BDC_SELECTED, count($rows)) ?> <?= bdcEscape($pending['delete_reviews'] ? BDC_REVIEWS_DELETE : BDC_REVIEWS_KEEP) ?></p>
 <?php if ($protected): ?><p class="alert alert-warning"><?= sprintf(BDC_PROTECTED, $protected) ?></p><?php endif; ?>
@@ -113,7 +112,7 @@ if ($pending === null) {
 <div class="bdc-table-wrap"><table class="table table-striped table-bordered bdc-table">
 <thead><tr>
 <?php if (!$pending): ?><th><input class="bdc-check" type="checkbox" id="bdc_all" aria-label="<?= bdcEscape(BDC_SELECT_ALL) ?>"></th><?php endif; ?>
-<?php foreach ([BDC_ID, BDC_NAME, BDC_EMAIL, BDC_IP, BDC_CREATED, BDC_LAST_LOGIN, BDC_COUNT] as $label): ?><th><?= bdcEscape($label) ?></th><?php endforeach; ?>
+<?php foreach ([BDC_ID, BDC_NAME, BDC_EMAIL, BDC_IP_COLUMN, BDC_CREATED, BDC_LAST_LOGIN, BDC_COUNT] as $label): ?><th><?= bdcEscape($label) ?></th><?php endforeach; ?>
 </tr></thead><tbody>
 <?php $shown = 0; foreach ($rows as $row): ++$shown; ?>
 <tr>
@@ -135,11 +134,11 @@ if ($pending === null) {
 </div>
 <div class="bdc-actions"><button type="submit" class="btn <?= $pending ? 'btn-danger' : 'btn-primary' ?>"<?= !$shown ? ' disabled' : '' ?>><?= bdcEscape($pending ? BDC_CONFIRM : BDC_REVIEW) ?></button>
 <?php if ($pending): ?><button type="submit" name="action" value="cancel" class="btn btn-default" formnovalidate><?= bdcEscape(BDC_CANCEL) ?></button><?php endif; ?>
-<a href="<?= bdcEscape(zen_href_link(FILENAME_CUSTOMERS)) ?>"><?= bdcEscape(BDC_STANDARD) ?></a></div>
+<a href="<?= zen_href_link(FILENAME_CUSTOMERS) ?>"><?= bdcEscape(BDC_STANDARD) ?></a></div>
 </form>
 <?php if (!$pending): ?><nav class="bdc-actions" aria-label="Pagination">
-<?php foreach ([-1 => BDC_PREVIOUS, 1 => BDC_NEXT] as $step => $label): $page = $filters['page'] + $step; if ($page < 1 || $page > $pages) { continue; } $params = $filters; $params['page'] = $page; ?>
-<a class="btn btn-default" href="<?= bdcEscape(zen_href_link(FILENAME_BULK_DELETE_CUSTOMERS, http_build_query($params))) ?>"><?= bdcEscape($label) ?></a>
+<?php foreach ([-1 => BDC_PREVIOUS, 1 => BDC_NEXT] as $step => $label): $bdcPage = $filters['page'] + $step; if ($bdcPage < 1 || $bdcPage > $bdcPages) { continue; } $params = $filters; $params['page'] = $bdcPage; ?>
+<a class="btn btn-default" href="<?= zen_href_link(FILENAME_BULK_DELETE_CUSTOMERS, http_build_query($params)) ?>"><?= bdcEscape($label) ?></a>
 <?php endforeach; ?></nav><?php endif; ?>
 </main>
 <?php require DIR_WS_INCLUDES . 'footer.php'; ?>

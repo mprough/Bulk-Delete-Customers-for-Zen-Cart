@@ -1,5 +1,8 @@
 # Bulk Delete Customers for Zen Cart
 
+**Download the install ZIP:** [Bulk-Delete-Customers-v1.0.2.zip](https://raw.githubusercontent.com/mprough/Bulk-Delete-Customers-for-Zen-Cart/main/dist/Bulk-Delete-Customers-v1.0.2.zip). Extract it on your computer and follow the installation instructions below.
+
+
 Version 1.0.2, by Melanie Prough, PRO-Webs, Inc. | [PRO-Webs.net](https://pro-webs.net/)
 
 Remove customer accounts in batches using checkbox selection. Checkboxes appear in the regular Customers list, including its unsearched view. A separate **Customers > Bulk customer removal** page adds filters to help identify possible spam registrations.

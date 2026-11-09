@@ -6,7 +6,7 @@ define('IS_ADMIN_FLAG', true);
 define('FILENAME_CUSTOMERS', 'customers');
 define('FILENAME_BULK_DELETE_CUSTOMERS', 'bulk_delete_customers');
 foreach (['CUSTOMERS', 'CUSTOMERS_INFO', 'ORDERS', 'CONFIGURATION'] as $table) { define('TABLE_' . $table, 'test_' . strtolower($table)); }
-$root = dirname(__DIR__) . '/files/zc_plugins/BulkDeleteCustomers/v1.0.1';
+$root = dirname(__DIR__) . '/files/zc_plugins/BulkDeleteCustomers/v1.0.2';
 require $root . '/admin/includes/classes/BulkDeleteCustomers.php';
 function check($truth, $message) { if (!$truth) { throw new RuntimeException($message); } }
 function fails(callable $fn, string $message) { try { $fn(); } catch (InvalidArgumentException $e) { check($e->getMessage() === $message, 'Unexpected error'); return; } throw new RuntimeException('Expected rejection: ' . $message); }

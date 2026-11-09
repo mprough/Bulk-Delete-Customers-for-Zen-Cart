@@ -14,7 +14,7 @@ namespace {
     define('IS_ADMIN_FLAG', true);
     define('TABLE_CONFIGURATION', 'test_configuration');
     define('TABLE_ADMIN_PAGES_TO_PROFILES', 'test_admin_pages_to_profiles');
-    $root = dirname(__DIR__) . '/files/zc_plugins/BulkDeleteCustomers/v1.0.1';
+    $root = dirname(__DIR__) . '/files/zc_plugins/BulkDeleteCustomers/v1.0.2';
     $pages = [];
     $registrations = 0;
     function check($condition, $message) { if (!$condition) { throw new \RuntimeException($message); } }

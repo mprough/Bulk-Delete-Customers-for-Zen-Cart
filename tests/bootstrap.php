@@ -2,7 +2,7 @@
 /** Exercise the real page entry point without preloading the currency class. */
 error_reporting(E_ALL);
 set_error_handler(function ($s, $m, $f, $l) { throw new ErrorException($m, 0, $s, $f, $l); });
-$root = dirname(__DIR__) . '/files/zc_plugins/BulkDeleteCustomers/v1.0.1';
+$root = dirname(__DIR__) . '/files/zc_plugins/BulkDeleteCustomers/v1.0.2';
 $temp = sys_get_temp_dir() . '/bdc-bootstrap-' . bin2hex(random_bytes(8));
 mkdir($temp . '/includes/classes', 0700, true);
 $start = getcwd();
@@ -10,7 +10,6 @@ try {
     file_put_contents($temp . '/includes/application_top.php', <<<'FIXTURE'
 <?php
 // Minimal Zen Cart bootstrap: currencies is intentionally NOT preloaded.
-define('IS_ADMIN_FLAG', true);
 define('DIR_WS_INCLUDES', 'includes/');
 define('DIR_WS_CLASSES', 'includes/classes/');
 define('DIR_FS_CATALOG', getcwd() . '/');
@@ -38,6 +37,7 @@ FIXTURE
     foreach (['admin_html_head.php', 'header.php', 'footer.php', 'application_bottom.php'] as $f) { file_put_contents($temp . '/includes/' . $f, '<?php'); }
     foreach (require $root . '/admin/includes/languages/english/lang.bulk_delete_customers.php' as $key => $value) { define($key, $value); }
     chdir($temp);
+    define('IS_ADMIN_FLAG', true);
     if (class_exists('currencies', false)) { throw new RuntimeException('Test must start with currency class unloaded'); }
     ob_start();
     require $root . '/admin/bulk_delete_customers.php';
